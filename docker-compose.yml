@@ -1,0 +1,42 @@
+# Homelab Phase 1 - core services
+# Start:  docker compose up -d     Stop: docker compose down
+# Logs:   docker compose logs -f <service>
+
+services:
+  # Web UI for managing Docker containers, images, volumes and networks
+  portainer:
+    image: portainer/portainer-ce:lts
+    container_name: portainer
+    restart: unless-stopped
+    ports:
+      - "9443:9443"            # https://localhost:9443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock   # lets Portainer control Docker
+      - portainer_data:/data
+
+  # Uptime monitoring: checks your services and alerts when one goes down
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: uptime-kuma
+    restart: unless-stopped
+    ports:
+      - "3001:3001"            # http://localhost:3001
+    volumes:
+      - uptime_kuma_data:/app/data
+
+  # Dashboard with links to every service
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    restart: unless-stopped
+    ports:
+      - "3000:3000"            # http://localhost:3000
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: localhost:3000,127.0.0.1:3000
+    volumes:
+      - ./homepage/config:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro  # read-only: shows container status
+
+volumes:
+  portainer_data:
+  uptime_kuma_data:

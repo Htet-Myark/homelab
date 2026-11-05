@@ -1,0 +1,5 @@
+# Secrets and local overrides - never commit these
+.env
+*.env
+# Homepage runtime files
+homepage/config/logs/

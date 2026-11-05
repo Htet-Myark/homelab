@@ -1,0 +1,14 @@
+- Management:
+    - Portainer:
+        href: https://localhost:9443
+        description: Manage Docker containers
+        icon: portainer.png
+        server: local
+        container: portainer
+- Monitoring:
+    - Uptime Kuma:
+        href: http://localhost:3001
+        description: Service uptime monitoring
+        icon: uptime-kuma.png
+        server: local
+        container: uptime-kuma
