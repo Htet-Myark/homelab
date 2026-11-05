@@ -32,7 +32,7 @@ services:
     ports:
       - "3000:3000"            # http://localhost:3000
     environment:
-      HOMEPAGE_ALLOWED_HOSTS: localhost:3000,127.0.0.1:3000
+      HOMEPAGE_ALLOWED_HOSTS: localhost:3000,127.0.0.1:3000,homepage:3000  # homepage:3000 = calls from other containers (Uptime Kuma)
     volumes:
       - ./homepage/config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro  # read-only: shows container status
