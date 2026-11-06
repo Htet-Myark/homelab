@@ -5,6 +5,13 @@
         icon: portainer.png
         server: local
         container: portainer
+- Apps:
+    - Tasks API:
+        href: http://localhost:8000/docs
+        description: FastAPI + PostgreSQL, deployed via GitHub Actions
+        icon: fastapi.png
+        server: local
+        container: tasks-api
 - Monitoring:
     - Uptime Kuma:
         href: http://localhost:3001

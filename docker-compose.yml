@@ -1,4 +1,4 @@
-# Homelab Phase 1 - core services
+# Homelab - core services (Phase 1) + own app (Phase 2)
 # Start:  docker compose up -d     Stop: docker compose down
 # Logs:   docker compose logs -f <service>
 
@@ -37,6 +37,41 @@ services:
       - ./homepage/config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro  # read-only: shows container status
 
+  # ---- Phase 2: own app (built and published by GitHub Actions) ----
+
+  # PostgreSQL database for the Tasks API (not exposed to the host, only to tasks-api)
+  tasks-db:
+    image: postgres:16-alpine
+    container_name: tasks-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tasks
+      POSTGRES_USER: tasks
+      POSTGRES_PASSWORD: ${TASKS_DB_PASSWORD:?set TASKS_DB_PASSWORD in .env}
+    volumes:
+      - tasks_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tasks -d tasks"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # FastAPI REST API. `docker compose pull tasks-api` gets the latest image from CI;
+  # `docker compose build tasks-api` builds it locally from ./app instead.
+  tasks-api:
+    image: ghcr.io/htet-myark/homelab-tasks-api:latest
+    build: ./app
+    container_name: tasks-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"            # http://localhost:8000/docs
+    environment:
+      DATABASE_URL: postgresql+psycopg://tasks:${TASKS_DB_PASSWORD}@tasks-db:5432/tasks
+    depends_on:
+      tasks-db:
+        condition: service_healthy   # wait until Postgres accepts connections
+
 volumes:
   portainer_data:
   uptime_kuma_data:
+  tasks_db_data:

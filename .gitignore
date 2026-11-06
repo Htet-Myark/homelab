@@ -1,5 +1,13 @@
 # Secrets and local overrides - never commit these
 .env
 *.env
+!.env.example
 # Homepage runtime files
 homepage/config/logs/
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.db
